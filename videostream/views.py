@@ -13,11 +13,11 @@ class ProcessVideoView(APIView):
             video_bytes = base64.b64decode(video_data)
             video_nparray = np.frombuffer(video_bytes, dtype=np.uint8)
             video = cv2.imdecode(video_nparray, cv2.IMREAD_UNCHANGED)
-
+            
             # 여기에서 OpenCV로 영상 처리 작업을 수행합니다.
             # 예를 들어, 영상을 회전시키는 코드
             # rotated_video = cv2.rotate(video, cv2.ROTATE_90_CLOCKWISE)
-
+            
             # 처리된 영상을 다시 Base64로 인코딩
             _, processed_video_bytes = cv2.imencode('.png', video)
             processed_video_data = base64.b64encode(processed_video_bytes).decode('utf-8')
