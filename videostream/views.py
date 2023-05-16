@@ -16,6 +16,7 @@ class ProcessVideoView(APIView):
             
             # 여기에서 OpenCV로 영상 처리 작업을 수행합니다.
             # 예를 들어, 영상을 회전시키는 코드
+            print(video.shape)
             # rotated_video = cv2.rotate(video, cv2.ROTATE_90_CLOCKWISE)
             
             # 처리된 영상을 다시 Base64로 인코딩
