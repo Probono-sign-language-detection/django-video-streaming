@@ -5,6 +5,12 @@ import cv2
 import base64
 import numpy as np
 
+
+class TestPostView(APIView):
+    def post(self, request, format=None):
+        received_data = request.data
+        return Response({'received_data': received_data})
+
 class ProcessVideoView(APIView):
     def post(self, request, format=None):
         video_data = request.data.get('video')
