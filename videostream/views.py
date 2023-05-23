@@ -8,6 +8,8 @@ import numpy as np
 class ProcessVideoView(APIView):
     def post(self, request, format=None):
         video_data = request.data.get('video')
+        print(request.data)
+        
         if video_data:
             # Base64로 인코딩된 영상 데이터를 디코딩하여 NumPy 배열로 변환
             video_bytes = base64.b64decode(video_data)
@@ -25,3 +27,4 @@ class ProcessVideoView(APIView):
             return Response({'processed_video': processed_video_data})
         else:
             return Response({'error': 'No video data received'}, status=400)
+        
