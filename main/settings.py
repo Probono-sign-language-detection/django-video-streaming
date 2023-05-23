@@ -36,11 +36,10 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOWED_ORIGINS = [
 	# 허용할 Origin 추가
-    "http://localhost:8080",
-    "http://127.0.0.1:9000"
+    "exp://172.30.1.35:19000"
 ]
 # 상황에 따라 모든 도메인에 대해서도 추가가 가능합니다
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
