@@ -8,8 +8,9 @@ WORKDIR /app
 COPY requirements.txt ./
 
 # 패키지 설치
-RUN apt-get update && apt-get install -y libgl1-mesa-glx vim \
+RUN apt-get update && apt-get install -y libgl1-mesa-glx\
     && rm -rf /var/lib/apt/lists/*
+RUN apt-get install vim
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 소스 코드 복사
