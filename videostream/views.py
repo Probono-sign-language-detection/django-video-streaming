@@ -5,7 +5,10 @@ import cv2
 import base64
 import numpy as np
 
-
+class CheckPortView(APIView):
+    def get(self, request, format=None):
+        return Response({'port': request.get_port()})
+    
 class TestPostView(APIView):
     def post(self, request, format=None):
         received_data = request.data
