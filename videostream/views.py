@@ -15,6 +15,7 @@ class ProcessVideoView(APIView):
     def post(self, request, format=None):
         video_data = request.data.get('video')
         print(request.data)
+        print(type(request.data))
         
         if video_data:
             # Base64로 인코딩된 영상 데이터를 디코딩하여 NumPy 배열로 변환
@@ -37,6 +38,9 @@ class ProcessVideoView(APIView):
 
 class ProcessUploadVideoView(APIView):
     def post(self, request, format=None):
+        # 디버깅 코드: 데이터 타입 출력
+        print(type(request.data))
+    
         video_file = request.FILES.get('video')
         
         if video_file:
@@ -48,7 +52,6 @@ class ProcessUploadVideoView(APIView):
             # 예를 들어, 영상을 회전시키는 코드
             print(video.shape)
             # rotated_video = cv2.rotate(video, cv2.ROTATE_90_CLOCKWISE)
-            
             _, processed_video_bytes = cv2.imencode('.png', video)
             processed_video_data = base64.b64encode(processed_video_bytes).decode('utf-8')
             return Response({'processed_video': processed_video_data})
