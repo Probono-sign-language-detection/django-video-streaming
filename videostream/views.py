@@ -34,3 +34,23 @@ class ProcessVideoView(APIView):
         else:
             return Response({'error': 'No video data received'}, status=400)
         
+
+class ProcessUploadVideoView(APIView):
+    def post(self, request, format=None):
+        video_file = request.FILES.get('video')
+        
+        if video_file:
+            video_bytes = video_file.read()  # 파일 읽기
+            video_nparray = np.frombuffer(video_bytes, dtype=np.uint8)
+            video = cv2.imdecode(video_nparray, cv2.IMREAD_UNCHANGED)
+            
+            # 여기에서 OpenCV로 영상 처리 작업을 수행합니다.
+            # 예를 들어, 영상을 회전시키는 코드
+            print(video.shape)
+            # rotated_video = cv2.rotate(video, cv2.ROTATE_90_CLOCKWISE)
+            
+            _, processed_video_bytes = cv2.imencode('.png', video)
+            processed_video_data = base64.b64encode(processed_video_bytes).decode('utf-8')
+            return Response({'processed_video': processed_video_data})
+        else:
+            return Response({'error': 'No video file received'}, status=400)
