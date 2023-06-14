@@ -1,4 +1,6 @@
 import cv2
+import json
+
 import numpy as np
 import base64
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -6,6 +8,14 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 class VideoConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
+        
+        # response to client, that we are connected.
+        await self.send(text_data=json.dumps({
+            'type': 'connection',
+            'data': {
+                'message': "Connected"
+            }
+        }))
 
     async def disconnect(self, close_code):
         pass
