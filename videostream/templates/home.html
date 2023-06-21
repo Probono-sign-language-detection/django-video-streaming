@@ -12,7 +12,7 @@
     <tr>
         <td width="50%">
             여기에 비디오 영상
-            <img src="http://127.0.0.1:8000/video/detectme" style="width:600px;" />
+            <img src="http://127.0.0.1:8000/video/detectme" style="width:650px; height:500px;" />
         </td>
         <td width="50%">
             <script>
@@ -24,17 +24,41 @@
                     // Get the video frame as a base64 string.
                     var videoFrame = document.querySelector("img").src;
                     var canvas = document.createElement("canvas");
+                    canvas.width = 650;
+                    canvas.height = 500;
                     var ctx = canvas.getContext("2d");
                     ctx.drawImage(document.querySelector("img"), 0, 0);
-                    var base64Frame = btoa(canvas.toDataURL("image/jpeg"));
-                    console.log(base64Frame);
-                    // Send the video frame to the process-video view.
+
+                    console.log("canvas:", canvas);
+                    var data = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+                    
+                    var base64Frame = btoa(data);
+
+                    // Check if the base64 string is valid.
+                    if (base64Frame.length % 4 !== 0) {
+                        console.log("Base64 string is invalid!");
+                        return;
+                    }
+
+                    console.log("Encoded Base64 Frame:", base64Frame);
+
+                    // Send the video frame to the process-video view using AJAX.
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            console.log("Video frame sent successfully!");
+                        } else {
+                            console.log("Error sending video frame: " + xhr.status);
+                        }
+                    };
+                
                     xhr.send(JSON.stringify({
-                        video: base64Frame
+                        image: base64Frame
                     }));
-                } 
+
+                }
             </script>
             <button onclick="sendVideoRequest()">Send Video Frame</button>
+
 
     </tr>
 </table>

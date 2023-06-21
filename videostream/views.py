@@ -10,8 +10,12 @@ from django.views.decorators import gzip
 from django.shortcuts import render
 from rest_framework.exceptions import APIException
 import io
+from io import BytesIO
 from PIL import Image
 import re
+from django.core.files.base import ContentFile
+import os
+from django.conf import settings
 
 
 class CheckPortView(APIView):
@@ -30,30 +34,39 @@ class VideoDecodingError(APIException):
     default_code = 'video_decoding_error'
 
 
+def save_decoded_image(image_data, path='static/video_test/image.png'):
+    try:
+        # with open('static/video_test/image.png', 'wb') as f:
+        #     f.write(image_data)
+        image = Image.open(BytesIO(image_data))
+        image.save(path)
+        return True
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return None
+
+
 class ProcessVideoView(APIView):
     def post(self, request, format=None):
-        video_data = request.data.get('video')
-        print('video_data : ',video_data)
+        en_image_data = request.data.get('image')
+        print('image_data : ',en_image_data[:30])
         # print(type(request.data))
-        
-        if video_data:
-            # video_data = re.sub('^data:image/jpeg;base64,', '', video_data)
-            # Base64로 인코딩된 영상 데이터를 디코딩하여 NumPy 배열로 변환
-            video_bytes = base64.b64decode(video_data)
-            
-            print('video_bytes:', video_bytes[:50])
-
-            encoded_img = np.fromstring(video_bytes, dtype = np.uint8)
-            img = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR) 
-
-            if img is not None:
-                img.save('static/video_test/output.png')
-
-                return Response({'processed_video': 'static/video_test/output.png'})
-            else:
-                raise VideoDecodingError()
+        # en_image_data = re.sub('^data:image/.+;base64,', '', en_image_data)
+        # print('video_data : ',en_image_data[:30])
+        if en_image_data:
+            b64_image_data = base64.b64decode(en_image_data)
+            print('image_data_bytes:', b64_image_data[:50])
+            # remove the header from the base64 string
+            bin_image_data = base64.b64decode(b64_image_data)
+            print('image_data_bytes:', bin_image_data[:50])
+            # save the image data as an image
+            flag = save_decoded_image(bin_image_data)
+            if flag:
+                print('saved image')
+            return Response({'message': 'Image saved successfully'})
         else:
             return Response({'error': 'No video data received'}, status=400)
+   
         
 
 class ProcessUploadVideoView(APIView):
