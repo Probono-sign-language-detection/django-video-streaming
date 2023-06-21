@@ -9,7 +9,9 @@ import threading
 from django.views.decorators import gzip
 from django.shortcuts import render
 from rest_framework.exceptions import APIException
-
+import io
+from PIL import Image
+import re
 
 
 class CheckPortView(APIView):
@@ -27,30 +29,27 @@ class VideoDecodingError(APIException):
     default_detail = 'Failed to decode video data.'
     default_code = 'video_decoding_error'
 
+
 class ProcessVideoView(APIView):
     def post(self, request, format=None):
         video_data = request.data.get('video')
-        print(request.data)
+        print('video_data : ',video_data)
         # print(type(request.data))
-
+        
         if video_data:
+            # video_data = re.sub('^data:image/jpeg;base64,', '', video_data)
             # Base64로 인코딩된 영상 데이터를 디코딩하여 NumPy 배열로 변환
             video_bytes = base64.b64decode(video_data)
-            print('video_bytes:', video_bytes[:22])  # Print the first 20 bytes for debugging
-            video_nparray = np.frombuffer(video_bytes, dtype=np.uint8)
-            print('video_nparray:', video_nparray.shape)  # Print the shape of the numpy array for debugging
+            
+            print('video_bytes:', video_bytes[:50])
 
-            # video = cv2.imdecode(video_nparray, cv2.IMREAD_UNCHANGED)
-            if video_nparray is not None:
-                print(video_nparray)
-                # 여기에서 OpenCV로 영상 처리 작업을 수행합니다.
-                # 예를 들어, 영상을 회전시키는 코드
-                # print(video.shape)
-                # rotated_video = cv2.rotate(video, cv2.ROTATE_90_CLOCKWISE)
-                # 처리된 영상을 다시 Base64로 인코딩
-                # _, processed_video_bytes = cv2.imencode('.png', video)
-                # processed_video_data = base64.b64encode(processed_video_bytes).decode('utf-8')
-                return Response({'processed_video': video_nparray})
+            encoded_img = np.fromstring(video_bytes, dtype = np.uint8)
+            img = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR) 
+
+            if img is not None:
+                img.save('static/video_test/output.png')
+
+                return Response({'processed_video': 'static/video_test/output.png'})
             else:
                 raise VideoDecodingError()
         else:
@@ -78,7 +77,7 @@ class ProcessUploadVideoView(APIView):
             return Response({'processed_video': processed_video_data})
         else:
             return Response({'error': 'No video file received'}, status=400)
-        
+
 
 
 

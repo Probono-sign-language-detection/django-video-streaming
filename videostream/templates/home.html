@@ -20,16 +20,19 @@
                     var xhr = new XMLHttpRequest();
                     xhr.open("POST", "http://127.0.0.1:8000/video/process-video/");
                     xhr.setRequestHeader("Content-Type", "application/json");
-    
+                
                     // Get the video frame as a base64 string.
                     var videoFrame = document.querySelector("img").src;
-                    var base64Frame = btoa(videoFrame);
-    
+                    var canvas = document.createElement("canvas");
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(document.querySelector("img"), 0, 0);
+                    var base64Frame = btoa(canvas.toDataURL("image/jpeg"));
+                    console.log(base64Frame);
                     // Send the video frame to the process-video view.
                     xhr.send(JSON.stringify({
                         video: base64Frame
                     }));
-                }
+                } 
             </script>
             <button onclick="sendVideoRequest()">Send Video Frame</button>
 
