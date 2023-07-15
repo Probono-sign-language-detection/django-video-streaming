@@ -5,6 +5,7 @@ networks:
     driver: bridge
 # docker-compose up --build
 services:
+
   reverse-proxy-container:
     build:
       context: ./nginx
@@ -16,13 +17,14 @@ services:
     environment:
       TZ: Asia/Seoul
     depends_on:
-      django:
-        condition: service_healthy
+      - django
+      # django:
+        # condition: service_healthy
     networks:
       - server
-
-  # 컨테이너 빌드
-  # docker run --name fastapi -d -p 8000:8800(호스트:컨테이너) fastapiapp
+# 컨테이너 빌드
+# docker run --name fastapi -d -p 8000:8800(호스트:컨테이너) fastapiapp
+# services:
   django:
     build:
       context: .
@@ -33,7 +35,7 @@ services:
       - .:/app
     healthcheck:
       test: curl -f http://localhost:8000
-      interval: 300s
+      interval: 60s
       timeout: 3s
       retries: 1
     networks:

@@ -5,17 +5,20 @@ import cv2
 import base64
 import numpy as np
 from django.http import StreamingHttpResponse, HttpResponseServerError
-import threading
 from django.views.decorators import gzip
 from django.shortcuts import render
 from rest_framework.exceptions import APIException
-import io
+
 from io import BytesIO
 from PIL import Image
-import re
-from django.core.files.base import ContentFile
+
 import os
 from django.conf import settings
+import sys
+import logging
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 class CheckPortView(APIView):
@@ -23,8 +26,14 @@ class CheckPortView(APIView):
         return Response({'port': request.get_port()})
     
 class TestPostView(APIView):
+    '''
+    {"data":"test"}
+    views.py 코드를 저장해야 print가 찍힌다..?
+    '''
     def post(self, request, format=None):
         received_data = request.data
+        print(received_data)
+        logger.debug(received_data)
         return Response({'received_data': received_data})
 
 
@@ -34,12 +43,16 @@ class VideoDecodingError(APIException):
     default_code = 'video_decoding_error'
 
 
-def save_decoded_image(image_data, path='static/video_test/image.png'):
+def save_decoded_image(image_data):
+    now = datetime.now()
+    path=f'static/video_test/image_{now.time()}.png'
     try:
         # with open('static/video_test/image.png', 'wb') as f:
         #     f.write(image_data)
         image = Image.open(BytesIO(image_data))
         image.save(path)
+        
+        print('saved image to static/video_test/')
         return True
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -50,19 +63,21 @@ class ProcessVideoView(APIView):
     def post(self, request, format=None):
         en_image_data = request.data.get('image')
         print('image_data : ',en_image_data[:30])
-        # print(type(request.data))
-        # en_image_data = re.sub('^data:image/.+;base64,', '', en_image_data)
-        # print('video_data : ',en_image_data[:30])
+        logger.debug('image_data: %s', en_image_data[:30])
+
         if en_image_data:
             b64_image_data = base64.b64decode(en_image_data)
             print('image_data_bytes:', b64_image_data[:50])
+            logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
             bin_image_data = base64.b64decode(b64_image_data)
             print('image_data_bytes:', bin_image_data[:50])
+            logger.debug('image_data_bytes: %s', bin_image_data[:50])
             # save the image data as an image
             flag = save_decoded_image(bin_image_data)
             if flag:
                 print('saved image')
+                logger.debug('saved image')
             return Response({'message': 'Image saved successfully'})
         else:
             return Response({'error': 'No video data received'}, status=400)
