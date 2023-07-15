@@ -33,8 +33,9 @@ services:
       - .:/app
     healthcheck:
       test: curl -f http://localhost:8000
-      interval: 60s
+      interval: 300s
       timeout: 3s
       retries: 1
     networks:
       - server
+
