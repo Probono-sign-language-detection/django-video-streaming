@@ -114,6 +114,8 @@ services:
     #   sh -c "nohup python consumer.py"
     volumes:
       - ./consumer:/app
+    stdin_open: true
+    tty: true
     networks:
       - rmoff_kafka
     depends_on:
