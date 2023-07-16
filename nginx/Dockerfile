@@ -1,4 +1,7 @@
-FROM nginx:latest
+
+# latest
+FROM nginx:alpine
+
 COPY nginx.conf /etc/nginx/nginx.conf
 # COPY logrotate.conf /etc/logrotate.conf
 
