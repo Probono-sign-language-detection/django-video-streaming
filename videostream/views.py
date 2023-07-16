@@ -13,7 +13,7 @@ import numpy as np
 from io import BytesIO
 from PIL import Image
 import os
-import logging
+# import logging
 from datetime import datetime
 
 # from time import sleep
@@ -72,7 +72,7 @@ class ProcessVideoView(APIView):
     base64를 kafka topic video에 전송하는 API입니다.
     
     '''
-    logger = logging.getLogger(__name__)
+    # logger = logging.getLogger(__name__)
     
     def post(self, request, format=None):
         en_image_data = request.data.get('image')
