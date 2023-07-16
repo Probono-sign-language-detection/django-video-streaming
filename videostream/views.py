@@ -52,13 +52,16 @@ class VideoDecodingError(APIException):
 
 def save_decoded_image(image_data):
     now = datetime.now()
-    path=f'static/video_test/image_{now.time()}.png'
+    directory = 'static/video_test'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
+    path = f'{directory}/image_{now.time()}.png'
+    
     try:
-        # with open('static/video_test/image.png', 'wb') as f:
-        #     f.write(image_data)
         image = Image.open(BytesIO(image_data))
         image.save(path)
-        print('saved image to static/video_test/')
+        print(f"Saved image to {path}")
         return True
     except Exception as e:
         print(f"Error occurred: {e}")
