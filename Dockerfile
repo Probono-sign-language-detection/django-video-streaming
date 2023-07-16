@@ -9,8 +9,7 @@ WORKDIR /app
 COPY requirements.txt ./
 
 # 패키지 설치
-RUN apt-get update && apt-get install -y bash\
-    && apt-get install -y build-essential\
+RUN apt-get update && apt-get install -y bash && apt-get install -y build-essential\
     && apt-get install -y libgl1-mesa-glx vim\
     && rm -rf /var/lib/apt/lists/*
 
