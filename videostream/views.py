@@ -1,24 +1,24 @@
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import cv2
-import base64
-import numpy as np
 from django.http import StreamingHttpResponse, HttpResponseServerError
 from django.views.decorators import gzip
 from django.shortcuts import render
 from rest_framework.exceptions import APIException
+from django.conf import settings
 
+import cv2
+import base64
+import numpy as np
 from io import BytesIO
 from PIL import Image
-
 import os
-from django.conf import settings
-import sys
 import logging
 from datetime import datetime
 
-logger = logging.getLogger(__name__)
+from time import sleep
+from json import dumps
+from kafka import KafkaProducer
 
 
 class CheckPortView(APIView):
@@ -33,7 +33,7 @@ class TestPostView(APIView):
     def post(self, request, format=None):
         received_data = request.data
         print(received_data)
-        logger.debug(received_data)
+        # logger.debug(received_data)
         return Response({'received_data': received_data})
 
 
@@ -51,7 +51,6 @@ def save_decoded_image(image_data):
         #     f.write(image_data)
         image = Image.open(BytesIO(image_data))
         image.save(path)
-        
         print('saved image to static/video_test/')
         return True
     except Exception as e:
@@ -60,24 +59,46 @@ def save_decoded_image(image_data):
 
 
 class ProcessVideoView(APIView):
+    '''
+    이 API는 클라이언트로부터 영상 데이터를 받아서 
+    OpenCV로 영상 처리를 수행한 후에
+    base64를 kafka topic video에 전송하는 API입니다.
+    
+    '''
+    logger = logging.getLogger(__name__)
+    
     def post(self, request, format=None):
         en_image_data = request.data.get('image')
         print('image_data : ',en_image_data[:30])
-        logger.debug('image_data: %s', en_image_data[:30])
+        # self.logger.debug('image_data: %s', en_image_data[:30])
 
         if en_image_data:
             b64_image_data = base64.b64decode(en_image_data)
             print('image_data_bytes:', b64_image_data[:50])
-            logger.debug('image_data_bytes: %s', b64_image_data[:50])
+            # logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
             bin_image_data = base64.b64decode(b64_image_data)
             print('image_data_bytes:', bin_image_data[:50])
-            logger.debug('image_data_bytes: %s', bin_image_data[:50])
+            # logger.debug('image_data_bytes: %s', bin_image_data[:50])
+            
             # save the image data as an image
             flag = save_decoded_image(bin_image_data)
             if flag:
                 print('saved image')
-                logger.debug('saved image')
+                # self.logger.debug('saved image')
+                
+            producer = KafkaProducer(
+                bootstrap_servers=['kafka:19092'],
+                value_serializer=lambda x: dumps(x).encode('utf-8')
+            )    
+            
+            data = {'image': en_image_data}
+            
+            # topic video에 데이터 전송 
+            producer.send('video', value=data)
+            
+            print('sent data to kafka')
+                
             return Response({'message': 'Image saved successfully'})
         else:
             return Response({'error': 'No video data received'}, status=400)
@@ -109,6 +130,7 @@ class ProcessUploadVideoView(APIView):
 
 
 
+## local video streaming
 class VideoCamera:
     def __init__(self):
         self.video = cv2.VideoCapture(0)

@@ -5,6 +5,33 @@ import numpy as np
 import base64
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+
+from kafka import KafkaConsumer
+from json import loads
+from channels.consumer import SyncConsumer
+
+
+class KafkaVideoConsumer(SyncConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.consumer = KafkaConsumer(
+            'video',
+            bootstrap_servers=['kafka:19092'],
+            auto_offset_reset='latest',
+            enable_auto_commit=True,
+            # group_id='my-group-id',
+            value_deserializer=lambda x: loads(x.decode('utf-8'))
+        )
+
+    def kafka_video_consumer(self, event):
+        for kafka_event in self.consumer:
+            event_data = kafka_event.value
+            # Do whatever you want
+            print(event_data['image'][:30])
+            # sleep(1)
+
+
 class VideoConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
