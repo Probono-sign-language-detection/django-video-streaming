@@ -2,7 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import StreamingHttpResponse, HttpResponseServerError
-from django.views.decorators import gzip
+# from django.views.decorators import gzip
 from django.shortcuts import render
 from rest_framework.exceptions import APIException
 from django.conf import settings
@@ -16,14 +16,21 @@ import os
 import logging
 from datetime import datetime
 
-from time import sleep
+# from time import sleep
 from json import dumps
-from kafka import KafkaProducer
+from kafka import KafkaProducer, KafkaConsumer
+from json import loads
+
+
+
+def home(request):
+    return render(request, 'home.html')
 
 
 class CheckPortView(APIView):
     def get(self, request, format=None):
         return Response({'port': request.get_port()})
+    
     
 class TestPostView(APIView):
     '''
@@ -159,9 +166,6 @@ def gen(camera):
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
-def home(request):
-    return render(request, 'home.html')
-
 
 def detectme(request):
     try:
@@ -170,3 +174,6 @@ def detectme(request):
     except Exception as e:
         print('에러 발생:', str(e))
         return HttpResponseServerError('Internal Server Error')
+    
+    
+    
