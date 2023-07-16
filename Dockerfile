@@ -19,9 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# Django 초기화 및 마이그레이션
-RUN python manage.py makemigrations
-RUN python manage.py migrate
+# # Django 초기화 및 마이그레이션
+# RUN python manage.py makemigrations
+# RUN python manage.py migrate
 
 EXPOSE 8000
 
