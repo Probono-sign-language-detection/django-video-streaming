@@ -103,12 +103,12 @@ class ProcessVideoView(APIView):
 
         if en_image_data:
             b64_image_data = base64.b64decode(en_image_data)
-            print('image_data_bytes:', b64_image_data[:50])
+            print('image_data_bytes:', b64_image_data)
             # logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
             
             bin_image_data = base64.b64decode(b64_image_data)
-            print('image_data_bytes:', bin_image_data[:50])
+            print('image_data_bytes:', bin_image_data)
             
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
