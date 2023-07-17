@@ -12,7 +12,7 @@ urlpatterns = [
     
     path('sessiondata-save/', SessionDataSaveView.as_view(), name='sessiondata_save'),
     
-    path('process-upload-video/', ProcessUploadVideoView.as_view(), name='process_upload_video'),
+    # path('process-upload-video/', ProcessUploadVideoView.as_view(), name='process_upload_video'),
     
     path('test-post/', TestPostView.as_view(), name='test_post'),
 
