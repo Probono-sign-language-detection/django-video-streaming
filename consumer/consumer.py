@@ -63,7 +63,8 @@ class Consumer:
                     headers={'Content-Type': 'application/json'}
                 )
                 
-                print(response.json())
+                print(response)
+                # print(response.json())
                 
                 sleep(1)
 
