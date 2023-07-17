@@ -59,9 +59,18 @@ def save_decoded_image(image_data):
     path = f'{directory}/image_{now.time()}.png'
     
     try:
-        image = Image.open(BytesIO(image_data))
-        image.save(path)
+        # image = Image.open(BytesIO(image_data))
+        # image.save(path)
         print(f"Saved image to {path}")
+        with open(path, 'rb') as f:
+            data = f.read()
+        encoded_img = np.frombuffer(data, dtype = np.uint8)
+        
+        img = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
+
+        print(img)
+        print(img.shape)
+        
         return True
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -93,13 +102,13 @@ class ProcessVideoView(APIView):
             # logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
             
-            # bin_image_data = base64.b64decode(b64_image_data)
-            # print('image_data_bytes:', bin_image_data[:50])
+            bin_image_data = base64.b64decode(b64_image_data)
+            print('image_data_bytes:', bin_image_data[:50])
             
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
             # save the image data as an image
-            flag = save_decoded_image(b64_image_data)
+            flag = save_decoded_image(bin_image_data)
             if flag:
                 print('saved image')
                 # self.logger.debug('saved image')
