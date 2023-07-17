@@ -7,7 +7,7 @@ class Session(models.Model):
 
 class SessionData(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    id = models.AutoField(primary_key=True)
+    id = models.IntegerField(primary_key=True)
     word = models.CharField(max_length=100)
 
     class Meta:
