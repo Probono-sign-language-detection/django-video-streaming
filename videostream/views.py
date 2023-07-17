@@ -80,7 +80,7 @@ def save_decoded_image(image_data):
         
         img = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
 
-        print(img[:10])
+        print(img[:2, :])
         print(img.shape)
         
         return True
