@@ -73,7 +73,7 @@ def save_decoded_image(image_data):
         
         img = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
 
-        print(img)
+        print(img[:10])
         print(img.shape)
         
         return True
@@ -91,7 +91,7 @@ class ProcessVideoView(APIView):
     # logger = logging.getLogger(__name__)
     
     def post(self, request, format=None):
-        print('request.data : ',request.data)
+        # print('request.data : ',request.data)
         
         data_dict = dict(request.data)
         
