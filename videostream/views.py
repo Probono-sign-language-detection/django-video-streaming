@@ -171,6 +171,8 @@ class SessionDataSaveView(View):
             # Create a new session data
             session_data = SessionData(session=session, id=id, word=word)
             session_data.save()
+            
+            print(f'saved session data {data}')
 
             return JsonResponse({'message': 'Data saved successfully'}, status=200)
 
