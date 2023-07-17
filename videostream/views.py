@@ -198,7 +198,6 @@ class ProcessUploadVideoView(APIView):
 
 
 
-
 ## local video streaming
 class VideoCamera:
     def __init__(self):

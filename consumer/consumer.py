@@ -54,7 +54,7 @@ class Consumer:
                 file.flush()
                 
                 response = requests.post(
-                    'http://django:8000/sessiondata-save/',  
+                    'http://django:8000/video/sessiondata-save/',  
                     data=json.dumps({
                         'session_id': session_id,
                         'id': id,
