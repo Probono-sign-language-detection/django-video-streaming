@@ -77,8 +77,10 @@ class ProcessVideoView(APIView):
     # logger = logging.getLogger(__name__)
     
     def post(self, request, format=None):
+        print('request.data : ',request.data)
+        
         en_image_data = request.data.get('image')
-        print('image_data : ',en_image_data[:30])
+        # print('image_data : ',en_image_data[:30])
         # self.logger.debug('image_data: %s', en_image_data[:30])
 
         if en_image_data:
