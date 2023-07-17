@@ -106,6 +106,7 @@ class ProcessVideoView(APIView):
             
             # topic video에 데이터 전송 
             producer.send('video', value=data)
+            producer.flush()
             
             print('sent data to kafka')
                 
