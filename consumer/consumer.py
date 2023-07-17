@@ -2,7 +2,7 @@ from kafka import KafkaConsumer
 from json import loads
 from time import sleep
 # import daemon
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
 from datetime import datetime
@@ -10,7 +10,7 @@ import requests
 import json
 
 # Load the environment variables from the .env file
-load_dotenv()
+# load_dotenv()
 
 
 class Consumer:
@@ -29,9 +29,9 @@ class Consumer:
         if os.path.exists(file_path):
             os.remove(file_path)
         
-        django_server_url = os.getenv('DJANGO_SERVER')
-        if not django_server_url:
-            raise ValueError('No DJANGO_SERVER environment variable set')
+        # django_server_url = os.getenv('DJANGO_SERVER')
+        # if not django_server_url:
+        #     raise ValueError('No DJANGO_SERVER environment variable set')
 
 
         with open(file_path, 'a') as file:
@@ -54,7 +54,7 @@ class Consumer:
                 file.flush()
                 
                 response = requests.post(
-                    f'{django_server_url}/sessiondata-save/',  
+                    'http://django:8000/sessiondata-save/',  
                     data=json.dumps({
                         'session_id': session_id,
                         'id': id,
