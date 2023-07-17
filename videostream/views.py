@@ -129,8 +129,8 @@ class ProcessVideoView(APIView):
                 value_serializer=lambda x: dumps(x).encode('utf-8')
             )    
             
-            session_list = random.randint(1, 5)
-            session_id = random.choice(session_list)
+            session_id = random.randint(1, 5)
+            # session_id = random.choice(session_list)
             id = random.randint(1, 20)
             word_list = ['apple', 'banana', 'carrot', 'dog', 'elephant', 'fish', 'grape', 'horse', 'icecream', 'juice']
             word = random.choice(word_list)
