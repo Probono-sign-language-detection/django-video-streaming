@@ -5,7 +5,7 @@ from django.utils import timezone
 # Create your models here.
 class Session(models.Model):
     session_id = models.IntegerField(primary_key=True, default=1)
-    created_at = models.DateTimeField(auto_now_add=True, default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class SessionData(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
