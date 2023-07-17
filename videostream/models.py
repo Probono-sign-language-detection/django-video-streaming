@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 class Session(models.Model):
     session_id = models.IntegerField(primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class SessionData(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
