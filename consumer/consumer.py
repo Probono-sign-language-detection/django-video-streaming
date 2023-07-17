@@ -2,8 +2,15 @@ from kafka import KafkaConsumer
 from json import loads
 from time import sleep
 # import daemon
+from dotenv import load_dotenv
 import os
+
 from datetime import datetime
+import requests
+import json
+
+# Load the environment variables from the .env file
+load_dotenv()
 
 
 class Consumer:
@@ -21,19 +28,43 @@ class Consumer:
         file_path = './kafka-output.txt'
         if os.path.exists(file_path):
             os.remove(file_path)
+        
+        django_server_url = os.getenv('DJANGO_SERVER')
+        if not django_server_url:
+            raise ValueError('No DJANGO_SERVER environment variable set')
+
 
         with open(file_path, 'a') as file:
+            word_list = []
             for event in self.consumer:
                 now = datetime.now()
                 now_time = now.strftime('%Y-%m-%d %H:%M:%S')
                 
                 event_data = event.value
                 # Write event_data['image'][:30] to the text file
-                data = event_data['image'][:30]
-                file.write(f'{now_time} : {data} \n')
-                print(f'{now_time} : {data}')
+                session_id = event_data['session_id']
+                id = event_data['id']
+                word = event_data['word']
+                
+                image = event_data['image'][:10]
+                
+                file.write(f'{now_time}, {session_id} : {image} \n')
+                print(f'{now_time}, {session_id} : {image}')
                 # Flush the buffer to ensure immediate write
                 file.flush()
+                
+                response = requests.post(
+                    f'{django_server_url}/sessiondata-save/',  
+                    data=json.dumps({
+                        'session_id': session_id,
+                        'id': id,
+                        'word': word
+                    }),
+                    headers={'Content-Type': 'application/json'}
+                )
+                
+                print(response.json())
+                
                 sleep(1)
 
 

@@ -6,6 +6,12 @@ from django.http import StreamingHttpResponse, HttpResponseServerError
 from django.shortcuts import render
 from rest_framework.exceptions import APIException
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+from django.views import View
+
+from .models import *
 
 import cv2
 import base64
@@ -19,8 +25,9 @@ from datetime import datetime
 # from time import sleep
 from json import dumps
 from kafka import KafkaProducer, KafkaConsumer
+import json
 from json import loads
-
+import random
 
 
 def home(request):
@@ -99,7 +106,6 @@ class ProcessVideoView(APIView):
         
         en_image_data = data_dict.get('image')
         # print('image_data : ',en_image_data[:30])
-        # self.logger.debug('image_data: %s', en_image_data[:30])
 
         if en_image_data:
             b64_image_data = base64.b64decode(en_image_data)
@@ -123,7 +129,13 @@ class ProcessVideoView(APIView):
                 value_serializer=lambda x: dumps(x).encode('utf-8')
             )    
             
-            data = {'image': en_image_data}
+            session_list = ['session_1', 'session_2', 'session_3']
+            session_id = random.choice(session_list)
+            id = random.randint(1, 20)
+            word_list = ['apple', 'banana', 'carrot', 'dog', 'elephant', 'fish', 'grape', 'horse', 'icecream', 'juice']
+            word = random.choice(word_list)
+            
+            data = {'session_id': session_id, 'id':id, 'word':word, 'image': en_image_data}
             
             # topic video에 데이터 전송 
             producer.send('video', value=data)
@@ -137,6 +149,30 @@ class ProcessVideoView(APIView):
             return Response({'error': 'No video data received'}, status=400)
    
         
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SessionDataSaveView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            # Parse data from the POST request
+            data = json.loads(request.body)
+
+            session_id = data.get('session_id')
+            id = data.get('id')
+            word = data.get('word')
+
+            # Create a new session if it does not exist
+            session, _ = Session.objects.get_or_create(session_id=session_id)
+
+            # Create a new session data
+            session_data = SessionData(session=session, id=id, word=word)
+            session_data.save()
+
+            return JsonResponse({'message': 'Data saved successfully'}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
 
 class ProcessUploadVideoView(APIView):
     def post(self, request, format=None):
