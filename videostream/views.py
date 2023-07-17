@@ -156,9 +156,11 @@ class SessionDataSaveView(View):
         print(request)
  
         try:
-            # Parse data from the POST request
-            data = json.loads(request.body)
-            print(data)
+            # # Parse data from the POST request
+            # data = json.loads(request.body)
+            # print(data)
+            
+            data = request
 
             session_id = data.get('session_id')
             id = data.get('id')
