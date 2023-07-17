@@ -72,8 +72,7 @@ class ProcessVideoView(APIView):
     '''
     이 API는 클라이언트로부터 영상 데이터를 받아서 
     OpenCV로 영상 처리를 수행한 후에
-    base64를 kafka topic video에 전송하는 API입니다.
-    
+    base64를 kafka topic video에 전송하는 API입니다.    
     '''
     # logger = logging.getLogger(__name__)
     
@@ -111,6 +110,7 @@ class ProcessVideoView(APIView):
             print('sent data to kafka')
                 
             return Response({'message': 'Image saved successfully'})
+        
         else:
             return Response({'error': 'No video data received'}, status=400)
    
