@@ -29,7 +29,9 @@
                     var ctx = canvas.getContext("2d");
                     ctx.drawImage(document.querySelector("img"), 0, 0);
 
-                    console.log("canvas:", canvas);
+                    console.log("canvas:", canvas.toDataURL("image/png"));
+
+
                     var data = canvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
                     
                     var base64Frame = btoa(data);

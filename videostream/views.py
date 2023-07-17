@@ -92,12 +92,14 @@ class ProcessVideoView(APIView):
             print('image_data_bytes:', b64_image_data[:50])
             # logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
-            bin_image_data = base64.b64decode(b64_image_data)
-            print('image_data_bytes:', bin_image_data[:50])
+            
+            # bin_image_data = base64.b64decode(b64_image_data)
+            # print('image_data_bytes:', bin_image_data[:50])
+            
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
             # save the image data as an image
-            flag = save_decoded_image(bin_image_data)
+            flag = save_decoded_image(b64_image_data)
             if flag:
                 print('saved image')
                 # self.logger.debug('saved image')
