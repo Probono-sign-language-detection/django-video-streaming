@@ -61,7 +61,12 @@ def save_decoded_image(image_data):
     try:
         # image = Image.open(BytesIO(image_data))
         # image.save(path)
+        # Write the binary data to a file
+        with open(path, 'wb') as f:
+            f.write(image_data)
+
         print(f"Saved image to {path}")
+        
         with open(path, 'rb') as f:
             data = f.read()
         encoded_img = np.frombuffer(data, dtype = np.uint8)
