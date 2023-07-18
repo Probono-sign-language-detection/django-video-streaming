@@ -5,6 +5,8 @@ ENV PYTHONUNBUFFERED 1
 # 작업 디렉토리 생성 및 설정
 WORKDIR /app
 
+ENV APP_HOME=/app
+
 # 필요한 패키지 복사
 COPY requirements.txt ./
 
@@ -18,11 +20,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
+EXPOSE 8000
+
+# app user 생성 및 모든 파일 권한변경
+RUN useradd -m app && chown -R app:app $APP_HOME
+
+USER app
+
+# RUN ["sleep", "infinity"]
+
 # # Django 초기화 및 마이그레이션
 # RUN python manage.py makemigrations
 # RUN python manage.py migrate
-
-EXPOSE 8000
 
 # Django 서버 실행
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

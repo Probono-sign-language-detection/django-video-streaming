@@ -3,6 +3,7 @@
 FROM nginx:latest
 
 COPY nginx.conf /etc/nginx/nginx.conf
+# COPY gunicorn.conf /etc/n
 # COPY logrotate.conf /etc/logrotate.conf
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

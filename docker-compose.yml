@@ -11,6 +11,7 @@ services:
     restart: always
     volumes:
       - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "static_volume:/static"
     environment:
       TZ: Asia/Seoul
     depends_on:
@@ -24,8 +25,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # python manage.py runserver 0.0.0.0:8000
+      #       sh -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py collectstatic --no-input && gunicorn --bind 0.0.0.0:8000 main.wsgi:application"
     command: >
-      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py collectstatic --no-input && gunicorn --bind 0.0.0.0:8000 main.wsgi:application"
     ports:
       - "8000:8000"
     stdin_open: true
@@ -57,7 +60,6 @@ services:
       retries: 5
     depends_on:
       - django
-
 
   zoo:
     image: confluentinc/cp-zookeeper:7.3.2
@@ -104,7 +106,6 @@ services:
     networks:
       - rmoff_kafka
 
-
   python-kafka-consumer:
     build:
       context: ./consumer
@@ -120,6 +121,16 @@ services:
       - rmoff_kafka
     depends_on:
       - django
+
+
+volumes:
+  redis-data:
+  static_volume:  # Volume definition
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/static
+      o: bind
 
 
 networks:
