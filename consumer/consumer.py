@@ -12,7 +12,6 @@ import json
 # Load the environment variables from the .env file
 # load_dotenv()
 
-
 class Consumer:
     def __init__(self, brokers, topicName):
         self.consumer = KafkaConsumer(
