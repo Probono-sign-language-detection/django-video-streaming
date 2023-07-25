@@ -11,6 +11,10 @@ import json
 
 # Load the environment variables from the .env file
 # load_dotenv()
+## model class
+
+## feature class
+
 
 class Consumer:
     def __init__(self, brokers, topicName):
@@ -32,7 +36,10 @@ class Consumer:
         # if not django_server_url:
         #     raise ValueError('No DJANGO_SERVER environment variable set')
 
-
+        # micro 배치 처리 
+        # -> 몇 장 : 100 frame -> 1 batch
+        # 10초
+        
         with open(file_path, 'a') as file:
             word_list = []
             for event in self.consumer:
@@ -51,6 +58,8 @@ class Consumer:
                 print(f'{now_time}, {session_id} : {image}')
                 # Flush the buffer to ensure immediate write
                 file.flush()
+                
+                
                 
                 response = requests.post(
                     'http://django:8000/video/sessiondata-save/',  

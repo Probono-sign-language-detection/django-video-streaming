@@ -74,6 +74,7 @@ def save_decoded_image(image_data):
 
         print(f"Saved image to {path}")
         
+        # error
         with open(path, 'rb') as f:
             data = f.read()
         encoded_img = np.frombuffer(data, dtype = np.uint8)
@@ -84,6 +85,7 @@ def save_decoded_image(image_data):
         print(img.shape)
         
         return True
+    
     except Exception as e:
         print(f"Error occurred: {e}")
         return None
@@ -109,12 +111,12 @@ class ProcessVideoView(APIView):
 
         if en_image_data:
             b64_image_data = base64.b64decode(en_image_data)
-            print('image_data_bytes:', b64_image_data)
+            print('image_data_bytes:', b64_image_data[:50])
             # logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
             
             bin_image_data = base64.b64decode(b64_image_data)
-            print('image_data_bytes:', bin_image_data)
+            print('image_data_bytes:', bin_image_data[:50])
             
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
@@ -142,12 +144,13 @@ class ProcessVideoView(APIView):
             producer.flush()
             
             print('sent data to kafka')
-                
+            
             return Response({'message': 'Image saved successfully'})
         
+
         else:
             return Response({'error': 'No video data received'}, status=400)
-        
+
         
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -201,7 +204,6 @@ class SessionDataSaveView(View):
 #             return Response({'processed_video': processed_video_data})
 #         else:
 #             return Response({'error': 'No video file received'}, status=400)
-
 
 
 ## local video streaming
