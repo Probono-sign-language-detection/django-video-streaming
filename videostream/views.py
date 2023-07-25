@@ -107,16 +107,16 @@ class ProcessVideoView(APIView):
         # print('data_dict : ',data_dict)
         
         en_image_data = data_dict.get('image')
-        # print('image_data : ',en_image_data[:30])
+        print('image_data : ',en_image_data[:30])
 
         if en_image_data:
             b64_image_data = base64.b64decode(en_image_data)
-            print('image_data_bytes_1:', b64_image_data[:10])
+            print('image_data_bytes_1:', b64_image_data[:30])
             # logger.debug('image_data_bytes: %s', b64_image_data[:50])
             # remove the header from the base64 string
             
             bin_image_data = base64.b64decode(b64_image_data)
-            print('image_data_bytes_2:', bin_image_data[:10])
+            print('image_data_bytes_2:', bin_image_data[:30])
             
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
@@ -147,7 +147,6 @@ class ProcessVideoView(APIView):
             
             return Response({'message': 'Image saved successfully'})
         
-
         else:
             return Response({'error': 'No video data received'}, status=400)
 
