@@ -121,7 +121,7 @@ class ProcessVideoView(APIView):
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
             # save the image data as an image
-            flag = save_decoded_image(bin_image_data)
+            flag = save_decoded_image(b64_image_data)
             if flag:
                 print('saved image')
                 # self.logger.debug('saved image')
