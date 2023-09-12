@@ -8,6 +8,8 @@ urlpatterns = [
     path('check-port/', CheckPortView.as_view(), name='check_port'),
 
     # process-video - video encoding
+    # ProcessWebVideoView
+    path('process-web-video/', ProcessWebVideoView.as_view(), name='process_web_video')
     path('process-video/', ProcessVideoView.as_view(), name='process_video'),
     
     path('sessiondata-save/', SessionDataSaveView.as_view(), name='sessiondata_save'),
@@ -18,5 +20,4 @@ urlpatterns = [
 
     path('', views.home,name="home"), # 웹사이트 링크 home.html
     path("detectme", views.detectme,name="detectme"), # 웹캠 링크
-    
 ]

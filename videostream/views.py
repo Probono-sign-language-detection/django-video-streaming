@@ -91,6 +91,7 @@ def save_decoded_image(image_data):
         return None
 
 
+
 class ProcessVideoView(APIView):
     '''
     이 API는 클라이언트로부터 영상 데이터를 받아서 
@@ -150,7 +151,67 @@ class ProcessVideoView(APIView):
         else:
             return Response({'error': 'No video data received'}, status=400)
 
+
+
+class ProcessWebVideoView(APIView):
+    '''
+    이 API는 클라이언트로부터 영상 데이터를 받아서 
+    OpenCV로 영상 처리를 수행한 후에
+    base64를 kafka topic video에 전송하는 API입니다.    
+    '''
+    # logger = logging.getLogger(__name__)
+    
+    def post(self, request, format=None):
+        # print('request.data : ',request.data)
         
+        data_dict = dict(request.data)
+        
+        # print('data_dict : ',data_dict)
+        
+        en_image_data = data_dict.get('image')
+        print('image_data : ',en_image_data[:30])
+
+        if en_image_data:
+            b64_image_data = base64.b64decode(en_image_data)
+            print('image_data_bytes_1:', b64_image_data[:30])
+            # logger.debug('image_data_bytes: %s', b64_image_data[:50])
+            # remove the header from the base64 string
+            
+            bin_image_data = base64.b64decode(b64_image_data)
+            print('image_data_bytes_2:', bin_image_data[:30])
+            
+            # logger.debug('image_data_bytes: %s', bin_image_data[:50])
+            
+            # save the image data as an image
+            flag = save_decoded_image(b64_image_data)
+            if flag:
+                print('saved image')
+                
+            producer = KafkaProducer(
+                bootstrap_servers=['kafka:19092'],
+                value_serializer=lambda x: dumps(x).encode('utf-8')
+            )    
+            
+            session_id = random.randint(1, 5)
+            # session_id = random.choice(session_list)
+            id = random.randint(1, 20)
+            word_list = ['apple', 'banana', 'carrot', 'dog', 'elephant', 'fish', 'grape', 'horse', 'icecream', 'juice']
+            word = random.choice(word_list)
+            
+            data = {'session_id': session_id, 'id':id, 'word':word, 'image': en_image_data}
+            
+            # topic video에 데이터 전송 
+            producer.send('video', value=data)
+            producer.flush()
+            
+            print('sent data to kafka')
+            
+            return Response({'message': 'Image saved successfully'})
+        
+        else:
+            return Response({'error': 'No video data received'}, status=400)
+
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class SessionDataSaveView(View):
@@ -180,29 +241,6 @@ class SessionDataSaveView(View):
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
-
-
-# class ProcessUploadVideoView(APIView):
-#     def post(self, request, format=None):
-#         # 디버깅 코드: 데이터 타입 출력
-#         print(type(request.data))
-    
-#         video_file = request.FILES.get('video')
-        
-#         if video_file:
-#             video_bytes = video_file.read()  # 파일 읽기
-#             video_nparray = np.frombuffer(video_bytes, dtype=np.uint8)
-#             video = cv2.imdecode(video_nparray, cv2.IMREAD_UNCHANGED)
-            
-#             # 여기에서 OpenCV로 영상 처리 작업을 수행합니다.
-#             # 예를 들어, 영상을 회전시키는 코드
-#             print(video.shape)
-#             # rotated_video = cv2.rotate(video, cv2.ROTATE_90_CLOCKWISE)
-#             _, processed_video_bytes = cv2.imencode('.png', video)
-#             processed_video_data = base64.b64encode(processed_video_bytes).decode('utf-8')
-#             return Response({'processed_video': processed_video_data})
-#         else:
-#             return Response({'error': 'No video file received'}, status=400)
 
 
 ## local video streaming
