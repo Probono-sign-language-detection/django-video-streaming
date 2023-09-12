@@ -14,8 +14,6 @@ import json
 ## model class
 
 ## feature class
-
-
 class Consumer:
     def __init__(self, brokers, topicName):
         self.consumer = KafkaConsumer(
@@ -31,10 +29,6 @@ class Consumer:
         file_path = './kafka-output.txt'
         if os.path.exists(file_path):
             os.remove(file_path)
-        
-        # django_server_url = os.getenv('DJANGO_SERVER')
-        # if not django_server_url:
-        #     raise ValueError('No DJANGO_SERVER environment variable set')
 
         # micro 배치 처리 
         # -> 몇 장 : 100 frame -> 1 batch
@@ -58,7 +52,6 @@ class Consumer:
                 print(f'{now_time}, {session_id} : {image}')
                 # Flush the buffer to ensure immediate write
                 file.flush()
-                
                 
                 
                 response = requests.post(
@@ -86,32 +79,3 @@ if __name__ == '__main__':
 
 
 
-
-
-# def run_consumer():
-#     consumer = KafkaConsumer(
-#         'video',
-#         bootstrap_servers=['kafka:19092'],
-#         auto_offset_reset='earliest',
-#         enable_auto_commit=True,
-#         # group_id='my-group-id',
-#         value_deserializer=lambda x: loads(x.decode('utf-8'))
-#     )
-
-#     file_path = './kafka-output.txt'
-#     if os.path.exists(file_path):
-#         os.remove(file_path)
-
-#     with open(file_path, 'a') as file:
-#         for event in consumer:
-#             event_data = event.value
-#             # Write event_data['image'][:30] to the text file
-#             file.write(event_data['image'][:30] + '\n')
-#             print(event_data['image'][:30])
-#             # Flush the buffer to ensure immediate write
-#             file.flush()
-#             # sleep(1)
-
-
-# with daemon.DaemonContext():
-#     run_consumer()

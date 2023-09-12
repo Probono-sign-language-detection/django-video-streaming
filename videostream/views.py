@@ -155,14 +155,14 @@ class ProcessVideoView(APIView):
 
 class ProcessWebVideoView(APIView):
     '''
-    이 API는 클라이언트로부터 영상 데이터를 받아서 
+    이 API는 웹 클라이언트로부터 영상 데이터를 받아서 
     OpenCV로 영상 처리를 수행한 후에
     base64를 kafka topic video에 전송하는 API입니다.    
     '''
     # logger = logging.getLogger(__name__)
     
     def post(self, request, format=None):
-        # print('request.data : ',request.data)
+        print('request.data : ',request.data)
         
         data_dict = dict(request.data)
         
@@ -183,7 +183,7 @@ class ProcessWebVideoView(APIView):
             # logger.debug('image_data_bytes: %s', bin_image_data[:50])
             
             # save the image data as an image
-            flag = save_decoded_image(b64_image_data)
+            flag = save_decoded_image(bin_image_data)
             if flag:
                 print('saved image')
                 

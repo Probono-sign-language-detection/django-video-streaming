@@ -12,13 +12,13 @@
     <tr>
         <td width="50%">
             여기에 비디오 영상
-            <img src="http://localhost:8000/video/detectme" style="width:650px; height:500px;" />
+            <img src="http://43.202.22.173/video/detectme" style="width:650px; height:500px;" />
         </td>
         <td width="50%">
             <script>
                 function sendVideoRequest() {
                     var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "http://43.202.22.173/video/process-video/"); // http://127.0.0.1:8000, http://52.79.253.142
+                    xhr.open("POST", "http://43.202.22.173/video/process-web-video/"); // http://127.0.0.1:8000, http://52.79.253.142
                     xhr.setRequestHeader("Content-Type", "application/json");
                 
                     // Get the video frame as a base64 string.
